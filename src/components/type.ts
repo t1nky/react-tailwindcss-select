@@ -32,15 +32,22 @@ export interface ClassNames {
     closeIcon?: string;
 }
 
-export type SelectValue = Option | Option[] | null;
+type SelectValueType<multiple extends boolean> = multiple extends true
+    ? null | Option[]
+    : null | Option;
+export type SelectValue = SelectValueType<true> | SelectValueType<false>;
 
-export interface SelectProps {
+interface SelectPropsType<T extends boolean> {
+    isMultiple?: T;
+    value: SelectValueType<T>;
+    onChange: (value: SelectValueType<T>) => void;
+}
+type SelectPropsUnion = SelectPropsType<true> | SelectPropsType<false>;
+
+export type SelectProps = SelectPropsUnion & {
     options: Options;
-    value: SelectValue;
-    onChange: (value: SelectValue) => void;
     onSearchInputChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
     placeholder?: string;
-    isMultiple?: boolean;
     isClearable?: boolean;
     isSearchable?: boolean;
     isDisabled?: boolean;
